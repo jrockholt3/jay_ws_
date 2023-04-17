@@ -1,0 +1,18 @@
+<launch>
+    <!--<include file="$(find edo_moveit)/launch/planning_context.launch">
+        <arg name="load_robot_description" value="true"/>
+    </include> 
+
+    <node name="robot_model_and_robot_state"
+        pkg="mink_control"
+        type="robot_model_and_robot_state_node"
+        respawn="false" output="screen">
+    </node> -->
+
+    <!-- needs 3 argument for each node tag, name of node, package and type-->
+    <!--<node name="talker" pkg="mink_control" type="talker_node"/>-->
+    <node name="py_talker" pkg="mink_control" type="py_talker.py"/>
+    <!--by default all output is sent to logs. if we want to print something out we
+        need to specify an output=screen argument-->
+    <node name="listener" pkg="mink_control" type="listener_node" output="screen"/>
+</launch>
