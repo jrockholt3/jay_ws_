@@ -11,7 +11,7 @@ jnt_vel_max = 1.5 #np.ones(5)*1.5
 freq = 2
 dt = 1/freq
 q_2dot_max = np.pi # rad/s^2
-Z = 0*q_2dot_max
+Z = .5*q_2dot_max
 
 def angle_calc(th_arr):
     s = np.sin(th_arr)
