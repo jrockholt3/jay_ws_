@@ -3,6 +3,8 @@
 #include <iostream>
 #include <Eigen/Geometry>
 #include <math.h>
+#include <fstream>
+#include <string.h>
 
 int freq = 1000;
 const double dt = 1/(double)freq;
@@ -27,6 +29,12 @@ const double calc_angle(double s, double c) {
 }
 
 int main(int argc, char** argv) {
+    std::ofstream myfile;
+    myfile.open("/home/jrockholt@ad.ufl.edu/Documents/traj_output.csv");
+    myfile<< "I wrote something"<<std::endl;
+    myfile.close();
+    myfile.open("/home/jrockholt@ad.ufl.edu/Documents/traj_output.csv");
+    // myfile.open("traj_output.csv");
     ros::init(argc, argv, "listener");
     ros::NodeHandle node_handle;
     ros::Subscriber subscriber = node_handle.subscribe("talker_topic", 1, &callback);
@@ -54,6 +62,7 @@ int main(int argc, char** argv) {
     q_dot_max.setConstant(c);
 
     while(ros::ok) {
+        // myfile.open("/home/jrockholt@ad.ufl.edu/jay_ws_/src/mink_control/file/traj_output.csv");
         ros::spinOnce();
         
         jnt_err = goal - curr;
@@ -82,6 +91,12 @@ int main(int argc, char** argv) {
         }
 
         nxt_q = (q_2dot - Z*q_dot)*dt_2 + q_dot*dt + q;
+        std::string s0 = std::to_string(nxt_q[0]); 
+        std::string s1 = std::to_string(nxt_q[1]); 
+        std::string s2 = std::to_string(nxt_q[2]); 
+        std::string s3 = std::to_string(nxt_q[3]); 
+        std::string s4 = std::to_string(nxt_q[4]); 
+        myfile << s0+","+s1+","+s2+","+s3+","+s4+"\n" << std::endl;
         mink_control::StringWithHeader way_ptn;
         way_ptn.jnt1 = nxt_q[0]; way_ptn.jnt2 = nxt_q[1]; way_ptn.jnt3 = nxt_q[2];
         way_ptn.jnt4 = nxt_q[3]; way_ptn.jnt5 = nxt_q[4];
@@ -90,7 +105,12 @@ int main(int argc, char** argv) {
         traj_pub.publish(way_ptn);
 
         rate.sleep();
+        // if (jnt_err.isApproxToConstant(0.0) and dedt.isApproxToConstant(0.0)) {
+        //     std::cout<<"reached goal"<<std::endl;
+        //     ros::spin();
+        // }
     }
 
+    myfile.close();
     return 0;
 }

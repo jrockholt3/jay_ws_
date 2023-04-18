@@ -7,11 +7,11 @@ import pickle
 
 # def callback(data):
 #     rospy.loginfo(rospy.get_caller_id + "I heard", data.data)
-jnt_vel_max = np.ones(5)*np.pi/2
+jnt_vel_max = 1.5 #np.ones(5)*1.5
 freq = 2
 dt = 1/freq
 q_2dot_max = np.pi # rad/s^2
-Z = .5*q_2dot_max
+Z = 0*q_2dot_max
 
 def angle_calc(th_arr):
     s = np.sin(th_arr)
@@ -24,9 +24,9 @@ def nxt_state(q, q_dot, action):
     flag = False
     if np.any(nxt_q_dot > jnt_vel_max):
         flag = True 
-        nxt_q_dot[nxt_q_dot > jnt_vel_max] = jnt_vel_max[nxt_q_dot > jnt_vel_max]
+        nxt_q_dot[nxt_q_dot > jnt_vel_max] = jnt_vel_max #jnt_vel_max[nxt_q_dot > jnt_vel_max]
     if np.any(nxt_q_dot < -1*jnt_vel_max):
-        nxt_q_dot[nxt_q_dot > jnt_vel_max] = -1*jnt_vel_max[nxt_q_dot > jnt_vel_max]
+        nxt_q_dot[nxt_q_dot > jnt_vel_max] = -1*jnt_vel_max #[nxt_q_dot > jnt_vel_max]
         flag = True 
     if flag:
         action = (nxt_q_dot - q_dot) / dt + Z*q_dot
@@ -45,10 +45,10 @@ def talker():
     q = np.zeros(5, dtype=np.float64)
     q_dot = np.zeros(5,dtype=np.float64)
 
-
+    i = 0
     while not rospy.is_shutdown():
-        i = 0
         while i < max_i:
+            if i%100==0: print('still running', i)
             action_i = actions[i,:]
             nxt_q, nxt_q_dot = nxt_state(q, q_dot, action_i)
 
@@ -64,7 +64,8 @@ def talker():
             q_dot = nxt_q_dot
             i += 1
             rate.sleep()
-        rate.sleep()
+        print("done reading")
+        rospy.spin()
 
 
 if __name__ == '__main__':
