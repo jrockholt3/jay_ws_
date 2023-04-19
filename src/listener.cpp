@@ -7,7 +7,7 @@
 #include <string.h>
 #include <std_msgs/Float32MultiArray.h>
 
-int freq = 100;
+int freq = 1000;
 const double dt = 1/(double)freq;
 const double dt_2 = dt*dt; //pow(dt,2)/2;
 const double P = 10;
@@ -148,8 +148,8 @@ int main(int argc, char** argv) {
         way_ptn.jnt1 = nxt_q[0]; way_ptn.jnt2 = nxt_q[1]; way_ptn.jnt3 = nxt_q[2];
         way_ptn.jnt4 = nxt_q[3]; way_ptn.jnt5 = nxt_q[4];
         q = nxt_q; q_dot = nxt_q_dot;
-        std::string str_out = s0+","+s1+","+s2+","+s3+","+s4;
-        std::cout << goal << std::endl;
+        // std::string str_out = s0+","+s1+","+s2+","+s3+","+s4;
+        // std::cout << goal << std::endl;
         traj_pub.publish(way_ptn);
 
         ros::spinOnce();

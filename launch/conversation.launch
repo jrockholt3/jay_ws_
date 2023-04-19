@@ -11,10 +11,10 @@
 
     <!-- needs 3 argument for each node tag, name of node, package and type-->
     <!--<node name="talker" pkg="mink_control" type="talker_node"/>-->
-    <!-- <node name="py_talker" pkg="mink_control" type="py_talker.py" output="screen"/> -->
-    <node name="py_traj_client" pkg="mink_control" type="py_traj_client.py" output="screen"/>
+    <node name="py_talker" pkg="mink_control" type="py_talker.py" output="screen"/>
+    <!-- <node name="py_traj_client" pkg="mink_control" type="py_traj_client.py" output="screen"/> -->
     <!--by default all output is sent to logs. if we want to print something out we
         need to specify an output=screen argument-->
-    <!-- <node name="listener" pkg="mink_control" type="listener_node" output="screen"/> -->
-    <node name="traj_server" pkg="mink_control" type="traj_server_node" output="screen"/>
+    <node name="listener" pkg="mink_control" type="listener_node" output="screen"/>
+    <!-- <node name="traj_server" pkg="mink_control" type="traj_server_node" output="screen"/> -->
 </launch>
