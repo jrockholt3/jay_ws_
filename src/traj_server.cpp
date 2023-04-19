@@ -7,6 +7,7 @@
 #include <string.h>
 #include <std_msgs/Float32MultiArray.h>
 #include <mink_control/update_goal.h>
+#include <sensor_msgs/JointState.h>
 
 
 typedef Eigen::Array<float,5,1> JointVector;

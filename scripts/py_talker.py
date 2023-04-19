@@ -5,7 +5,7 @@ from mink_control.msg import StringWithHeader
 import numpy as np
 import pickle
 import csv
-
+from sensor_msgs.msg import JointState
 
 # def callback(data):
 #     rospy.loginfo(rospy.get_caller_id + "I heard", data.data)
@@ -15,6 +15,8 @@ update_freq = 50
 dt = 1/update_freq
 q_2dot_max = np.pi # rad/s^2
 Z = .5*q_2dot_max
+q = np.zeros(5, dtype=np.float64)
+q_dot = np.zeros(5,dtype=np.float64)
 
 def angle_calc(th_arr):
     s = np.sin(th_arr)
@@ -37,21 +39,28 @@ def nxt_state(q, q_dot, action):
     nxt_q = angle_calc(nxt_q)
     return (nxt_q, nxt_q_dot)
 
+def jnt_state_callback(state):
+    q = state.position
+    q_dot = state.velocity
+    # print("py_talker: updated state")
+    
+
 
 def talker():
-    file = open('/home/jrockholt@ad.ufl.edu/Documents/git/FiveLinkRobot/action_mem.pkl','rb')
     pub = rospy.Publisher('talker_topic',StringWithHeader,queue_size=10)
+    rospy.Subscriber('joint_states', JointState, jnt_state_callback)
     # sub = rospy.Subscriber('updated_status',std_msgs.bool,queue_size=1)
     rospy.init_node('py_talker',anonymous=True)
-    actions = pickle.load(file)
     rate = rospy.Rate(pub_freq)
-    rate1 = rospy.Rate(0.5)
-    max_i = actions.shape[0]
-    q = np.zeros(5, dtype=np.float64)
-    q_dot = np.zeros(5,dtype=np.float64)
-    file_path = "/home/jrockholt@ad.ufl.edu/Documents/git/FiveLinkRobot/goal_published.csv"
+    # file_path = "/home/jrockholt@ad.ufl.edu/Documents/git/FiveLinkRobot/goal_published.csv"
+    file_path = "/home/jrockholt@ad.ufl.edu/Documents/goal_published.csv";
     file = open(file_path)
     csv_writer = csv.writer(file)
+
+    # file = open('/home/jrockholt@ad.ufl.edu/Documents/git/FiveLinkRobot/action_mem.pkl','rb')
+    # actions = pickle.load(file)
+    actions = np.zeros((150,5),dtype=float)
+    max_i = actions.shape[0]
 
     i = 0
     j = 40
@@ -61,6 +70,8 @@ def talker():
     msg.jnt3 = q[2].item()
     msg.jnt4 = q[3].item()
     msg.jnt5 = q[4].item()
+    
+    rate1 = rospy.Rate(0.1)
     rate1.sleep()
     while not rospy.is_shutdown():
         while i < max_i and not rospy.is_shutdown():
@@ -69,22 +80,22 @@ def talker():
                 if i%100==0: print('still running', i)
                 action_i = actions[i,:]
                 # print('action', action_i)
-                nxt_q, nxt_q_dot = nxt_state(q, q_dot, action_i)
+                # nxt_q, nxt_q_dot = nxt_state(q, q_dot, action_i)
 
                 msg = StringWithHeader()
-                msg.jnt1 = nxt_q[0].item()
-                msg.jnt2 = nxt_q[1].item()
-                msg.jnt3 = nxt_q[2].item()
-                msg.jnt4 = nxt_q[3].item()
-                msg.jnt5 = nxt_q[4].item()
-                # msg.jnt1 = np.pi/4
-                # msg.jnt2 = np.pi/4
-                # msg.jnt3 = np.pi/4
-                # msg.jnt4 = np.pi/4
-                # msg.jnt5 = np.pi/4
+                # msg.jnt1 = nxt_q[0].item()
+                # msg.jnt2 = nxt_q[1].item()
+                # msg.jnt3 = nxt_q[2].item()
+                # msg.jnt4 = nxt_q[3].item()
+                # msg.jnt5 = nxt_q[4].item()
+                msg.jnt1 = np.pi/4
+                msg.jnt2 = np.pi/4
+                msg.jnt3 = np.pi/4
+                msg.jnt4 = np.pi/4
+                msg.jnt5 = np.pi/4
 
-                q = nxt_q
-                q_dot = nxt_q_dot
+                # q = nxt_q
+                # q_dot = nxt_q_dot
                 i += 1
                 j = 0
             j+=1
